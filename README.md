@@ -131,10 +131,11 @@ output any found people with their birthday on stdout, which will be fed in
 to the update script, which will tell Immich how old these people are. Throw
 this in a cron job and enjoy automated updates!
 
+If you don't want to get an email with the updated birthdays, you can add
+`--silent` at the end of the line.
+
 ## Future features
 
 An enterprising person could implement a script similar to `carddav.py` which
 syncs with Google Contacts, if that's where you keep your birthday information.
 I myself am not planning to implement this, but I do welcome your contribution!
-
-A `--silent` parameter may be useful for cron jobs.

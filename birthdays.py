@@ -86,7 +86,7 @@ def validate_birthdate(date_str):
         return False
 
 
-def update_birthdates(IMMICH_URL, API_KEY, rows):
+def update_birthdates(IMMICH_URL, API_KEY, rows, silent):
     """Update birthdays on Immich based on the rows passed"""
     headers = {
         "Accept": "application/json",
@@ -111,7 +111,8 @@ def update_birthdates(IMMICH_URL, API_KEY, rows):
 
         resp = requests.put(url, headers=headers, json=payload)
         if resp.status_code == 200:
-            print(f"✔ Updated {name} ({person_id}) with birthDate={birthdate}", file=sys.stderr)
+            if not silent:
+                print(f"✔ Updated {name} ({person_id}) with birthDate={birthdate}", file=sys.stderr)
         else:
             print(f"✖ Failed to update {name} ({person_id}): {resp.status_code} {resp.text}", file=sys.stderr)
 
@@ -120,6 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Immich people birthdate management")
     parser.add_argument("--fetch", action="store_true", help="Fetch people without birthdates and output CSV")
     parser.add_argument("--update", action="store_true", help="Update people birthdates from CSV")
+    parser.add_argument("--silent", action="store_true", help="No non-error output")
     parser.add_argument("--file", type=str, help="CSV file to read from or write to (default: stdin/stdout)")
     args = parser.parse_args()
 
@@ -142,6 +144,6 @@ if __name__ == "__main__":
         input_file = open(args.file, newline="", encoding="utf-8") if args.file else sys.stdin
         reader = csv.reader(input_file, delimiter=";")
         header = next(reader, None)  # skip header
-        update_birthdates(IMMICH_URL, API_KEY, reader)
+        update_birthdates(IMMICH_URL, API_KEY, reader, args.silent)
         if args.file:
             input_file.close()
