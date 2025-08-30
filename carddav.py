@@ -113,6 +113,19 @@ def fetch_birthdates_from_carddav(rows, url, username, password, sleep):
             # Clean up nicknames ("William Turner (Bill)" -> "William Turner")
             vcard_clean_name = re.sub(r"\s*\([^)]*\)", "", vcard_clean_name)
 
+            # Remove trailing emoji / symbols (Monica adds coffins etc...)
+            TRAILING_EMOJI_RE = re.compile(
+                r"(?:\s*[\u2600-\u26FF"         # Misc Symbols (e.g., ⚰, ☀)
+                r"\u2700-\u27BF"                # Dingbats (e.g., ✈)
+                r"\U0001F1E6-\U0001F1FF"        # Regional indicator symbols (flags)
+                r"\U0001F300-\U0001FAFF"        # Misc Pictographs, Emoticons, etc.
+                r"\U0001F900-\U0001F9FF"        # Supplemental Symbols & Pictographs
+                r"\u200D"                       # Zero Width Joiner
+                r"\uFE0F"                       # Variation Selector-16
+                r"])+\s*$"
+            )
+            vcard_clean_name = TRAILING_EMOJI_RE.sub("", vcard_clean_name)
+
             if vcard_name and vcard_clean_name == name.lower() and vcard_bday:
                 found_birthdate = normalize_bday(str(vcard_bday.value))
                 break
