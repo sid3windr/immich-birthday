@@ -8,7 +8,7 @@ import os
 # Add parent dir to path for import
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from birthdays import validate_birthdate, update_birthdates, load_config
+from birthdays import validate_birthdate, update_birthdates, load_config, get_people_without_birthdate
 
 
 def test_validate_birthdate_valid():
@@ -82,3 +82,33 @@ def test_load_config_missing_key_exits(tmp_path, monkeypatch):
 
     with pytest.raises(SystemExit):
         load_config()
+
+
+def test_get_people_without_birthdate_filters_and_paginates():
+    """get_people_without_birthdate correctly filters and handles pagination."""
+    import requests_mock
+
+    page1 = {
+        "people": [
+            {"id": "p1", "name": "Alice", "birthDate": None},
+            {"id": "p2", "name": "", "birthDate": None},  # no name
+            {"id": "p3", "name": "Bob", "birthDate": "2020-01-01"},  # has date
+        ],
+        "hasNextPage": True
+    }
+    page2 = {
+        "people": [
+            {"id": "p4", "name": "Charlie", "birthDate": None},
+        ],
+        "hasNextPage": False
+    }
+
+    with requests_mock.Mocker() as m:
+        m.get("http://example.com/api/people?withHidden=false&page=1&size=1000", json=page1)
+        m.get("http://example.com/api/people?withHidden=false&page=2&size=1000", json=page2)
+
+        results = get_people_without_birthdate("http://example.com", "dummykey")
+
+    assert len(results) == 2
+    assert results[0]["id"] == "p1"
+    assert results[1]["id"] == "p4"
