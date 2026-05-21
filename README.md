@@ -139,3 +139,13 @@ If you don't want to get an email with the updated birthdays, you can add
 An enterprising person could implement a script similar to `carddav.py` which
 syncs with Google Contacts, if that's where you keep your birthday information.
 I myself am not planning to implement this, but I do welcome your contribution!
+
+## Testing
+
+Run the test suite with:
+
+```
+pytest
+```
+
+Initial tests cover the `validate_birthdate` helper. More coverage (including API mocking) is planned.

@@ -79,10 +79,12 @@ def get_people_without_birthdate(IMMICH_URL, API_KEY):
 
 def validate_birthdate(date_str):
     """Return True if date_str is in YYYY-MM-DD format."""
+    if not date_str:
+        return False
     try:
         datetime.strptime(date_str, "%Y-%m-%d")
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 
