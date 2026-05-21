@@ -7,7 +7,7 @@ import os
 # Add parent dir to path for import
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from carddav import normalize_bday
+from carddav import normalize_bday, load_config
 
 
 def test_normalize_bday_valid_formats():
@@ -27,3 +27,35 @@ def test_normalize_bday_old_year_omitted():
     # X-APPLE-OMIT-YEAR style (year < 1900)
     assert normalize_bday("1604-05-15") is None
     assert normalize_bday("18001231") is None
+
+
+def test_load_config_carddav_with_ini(tmp_path, monkeypatch):
+    """carddav load_config reads from immich.ini when present."""
+    ini = tmp_path / "immich.ini"
+    ini.write_text("[carddav]\nurl=https://carddav.test\nusername=testuser\npassword=secret\nsleep=0.5\n")
+
+    monkeypatch.setattr("carddav.__file__", str(tmp_path / "carddav.py"))
+
+    url, user, pw, slp = load_config()
+    assert url == "https://carddav.test"
+    assert user == "testuser"
+    assert pw == "secret"
+    assert slp == 0.5
+
+
+def test_load_config_carddav_fallback_to_env(tmp_path, monkeypatch):
+    """carddav load_config falls back to env vars."""
+    ini = tmp_path / "immich.ini"
+    ini.write_text("[carddav]\n")
+
+    monkeypatch.setattr("carddav.__file__", str(tmp_path / "carddav.py"))
+    monkeypatch.setenv("CARDDAV_URL", "https://env-carddav.test")
+    monkeypatch.setenv("CARDDAV_USER", "envuser")
+    monkeypatch.setenv("CARDDAV_PASS", "envpass")
+    monkeypatch.setenv("CARDDAV_SLEEP", "1.0")
+
+    url, user, pw, slp = load_config()
+    assert url == "https://env-carddav.test"
+    assert user == "envuser"
+    assert pw == "envpass"
+    assert slp == 1.0
