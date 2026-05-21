@@ -1,6 +1,5 @@
 """Tests for carddav.py core functionality."""
 
-import pytest
 import sys
 import os
 

@@ -1,7 +1,6 @@
 """Tests for birthdays.py core functionality."""
 
 import pytest
-from datetime import datetime
 import sys
 import os
 

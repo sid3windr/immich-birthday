@@ -31,7 +31,7 @@ import configparser
 import os
 import sys
 import re
-from typing import Any, Tuple, List, Optional
+from typing import Tuple, List, Optional
 
 NAMESPACES = {'D': 'DAV:', 'C': 'urn:ietf:params:xml:ns:carddav'}
 
@@ -45,6 +45,7 @@ TRAILING_EMOJI_RE = re.compile(
     r"\uFE0F"                       # Variation Selector-16
     r"])+\s*$"
 )
+
 
 def clean_name(name: str) -> str:
     """Clean nickname parentheses and trailing emoji/symbols from a name."""
