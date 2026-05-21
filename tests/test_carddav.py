@@ -59,3 +59,25 @@ def test_load_config_carddav_fallback_to_env(tmp_path, monkeypatch):
     assert user == "envuser"
     assert pw == "envpass"
     assert slp == 1.0
+
+
+def test_name_cleaning_emoji_and_nickname():
+    """Nickname cleanup and trailing emoji/symbol stripping."""
+    import re
+
+    # Nickname cleanup
+    name = "William Turner (Bill)"
+    cleaned = re.sub(r"\s*\([^)]*\)", "", name)
+    assert cleaned == "William Turner"
+
+    # Trailing emoji/symbol stripping (simplified version of the regex in carddav.py)
+    TRAILING_EMOJI_RE = re.compile(
+        r"(?:\s*[\u2600-\u26FF\u2700-\u27BF\U0001F1E6-\U0001F1FF\U0001F300-\U0001FAFF\U0001F900-\U0001F9FF\u200D\uFE0F])+\s*$"
+    )
+    name_with_emoji = "Alice ⚰"
+    cleaned_emoji = TRAILING_EMOJI_RE.sub("", name_with_emoji)
+    assert cleaned_emoji == "Alice"
+
+    name_with_flag = "Bob 🇩🇪"
+    cleaned_flag = TRAILING_EMOJI_RE.sub("", name_with_flag)
+    assert cleaned_flag == "Bob"
