@@ -48,7 +48,7 @@ def load_config() -> Tuple[str, str]:
     return IMMICH_URL, API_KEY
 
 
-def get_people_without_birthdate(IMMICH_URL: str, API_KEY: *** -> List[dict]:
+def get_people_without_birthdate(IMMICH_URL: str, API_KEY: str) -> List[dict]:
     headers = {
         "Accept": "application/json",
         "x-api-key": API_KEY,
@@ -89,7 +89,7 @@ def validate_birthdate(date_str: Optional[str]) -> bool:
         return False
 
 
-def update_birthdates(IMMICH_URL: str, API_KEY: *** rows: Any, silent: bool) -> None:
+def update_birthdates(IMMICH_URL: str, API_KEY: str, rows: Any, silent: bool) -> None:
     """Update birthdays on Immich based on the rows passed"""
     headers = {
         "Accept": "application/json",
