@@ -79,10 +79,12 @@ def get_people_without_birthdate(IMMICH_URL, API_KEY):
 
 def validate_birthdate(date_str):
     """Return True if date_str is in YYYY-MM-DD format."""
+    if not date_str:
+        return False
     try:
         datetime.strptime(date_str, "%Y-%m-%d")
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 
@@ -99,11 +101,10 @@ def update_birthdates(IMMICH_URL, API_KEY, rows, silent):
             continue  # skip empty or malformed lines
 
         person_id, name, birthdate = [cell.strip() for cell in row]
-        if not birthdate:
-            continue
 
         if not validate_birthdate(birthdate):
-            print(f"⚠ Skipping {name} ({person_id}): invalid birthdate '{birthdate}'", file=sys.stderr)
+            if birthdate:
+                print(f"⚠ Skipping {name} ({person_id}): invalid birthdate '{birthdate}'", file=sys.stderr)
             continue
 
         url = f"{IMMICH_URL}/api/people/{person_id}"
