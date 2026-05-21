@@ -36,7 +36,14 @@ from typing import Any, Tuple, List, Optional
 NAMESPACES = {'D': 'DAV:', 'C': 'urn:ietf:params:xml:ns:carddav'}
 
 TRAILING_EMOJI_RE = re.compile(
-    r"(?:\s*[\u2600-\u26FF\u2700-\u27BF\U0001F1E6-\U0001F1FF\U0001F300-\U0001FAFF\U0001F900-\U0001F9FF\u200D\uFE0F])+\s*$"
+    r"(?:\s*[\u2600-\u26FF"         # Misc Symbols (e.g., ⚰, ☀)
+    r"\u2700-\u27BF"                # Dingbats (e.g., ✈)
+    r"\U0001F1E6-\U0001F1FF"        # Regional indicator symbols (flags)
+    r"\U0001F300-\U0001FAFF"        # Misc Pictographs, Emoticons, etc.
+    r"\U0001F900-\U0001F9FF"        # Supplemental Symbols & Pictographs
+    r"\u200D"                       # Zero Width Joiner
+    r"\uFE0F"                       # Variation Selector-16
+    r"])+\s*$"
 )
 
 def clean_name(name: str) -> str:
