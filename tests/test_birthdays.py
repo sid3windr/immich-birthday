@@ -8,7 +8,7 @@ import os
 # Add parent dir to path for import
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from birthdays import validate_birthdate, update_birthdates
+from birthdays import validate_birthdate, update_birthdates, load_config
 
 
 def test_validate_birthdate_valid():
@@ -44,3 +44,41 @@ def test_update_birthdates_skips_malformed_and_empty_rows():
     # Only one PUT was made
     assert len(m.request_history) == 1
     assert m.request_history[0].url.endswith("/id4")
+
+
+def test_load_config_with_ini(tmp_path, monkeypatch):
+    """load_config reads from immich.ini when present."""
+    ini = tmp_path / "immich.ini"
+    ini.write_text("[immich]\nurl=https://immich.test\napi_key=ini-key-123\n")
+
+    # Patch __file__ so load_config looks in tmp_path
+    monkeypatch.setattr("birthdays.__file__", str(tmp_path / "birthdays.py"))
+
+    url, key = load_config()
+    assert url == "https://immich.test"
+    assert key == "ini-key-123"
+
+
+def test_load_config_fallback_to_env(tmp_path, monkeypatch):
+    """load_config falls back to env vars when ini keys are missing."""
+    ini = tmp_path / "immich.ini"
+    ini.write_text("[immich]\nurl=https://immich.test\n")
+
+    monkeypatch.setattr("birthdays.__file__", str(tmp_path / "birthdays.py"))
+    monkeypatch.setenv("IMMICH_URL", "https://env.test")
+    monkeypatch.setenv("IMMICH_API_KEY", "env-key-456")
+
+    url, key = load_config()
+    assert url == "https://immich.test"  # ini wins for url
+    assert key == "env-key-456"
+
+
+def test_load_config_missing_key_exits(tmp_path, monkeypatch):
+    """load_config calls sys.exit when no API key is available."""
+    ini = tmp_path / "immich.ini"
+    ini.write_text("[immich]\nurl=https://immich.test\n")
+
+    monkeypatch.setattr("birthdays.__file__", str(tmp_path / "birthdays.py"))
+
+    with pytest.raises(SystemExit):
+        load_config()
