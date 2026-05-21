@@ -59,3 +59,13 @@ def test_load_config_carddav_fallback_to_env(tmp_path, monkeypatch):
     assert user == "envuser"
     assert pw == "envpass"
     assert slp == 1.0
+
+
+def test_name_cleaning_emoji_and_nickname():
+    """Nickname cleanup and trailing emoji/symbol stripping using the real implementation."""
+    from carddav import clean_name
+
+    assert clean_name("William Turner (Bill)") == "William Turner"
+    assert clean_name("Alice ⚰") == "Alice"
+    assert clean_name("Bob 🇩🇪") == "Bob"
+    assert clean_name("  Charlie (Chuck) 🎉  ") == "Charlie"
