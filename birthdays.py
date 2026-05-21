@@ -26,9 +26,10 @@ import sys
 import argparse
 import csv
 from datetime import datetime
+from typing import Any, Tuple, List, Optional
 
 
-def load_config():
+def load_config() -> Tuple[str, str]:
     """Load Immich configuration from immich.ini or environment variables."""
     config = configparser.ConfigParser()
     ini_path = os.path.join(os.path.dirname(__file__), "immich.ini")
@@ -47,7 +48,7 @@ def load_config():
     return IMMICH_URL, API_KEY
 
 
-def get_people_without_birthdate(IMMICH_URL, API_KEY):
+def get_people_without_birthdate(IMMICH_URL: str, API_KEY: *** -> List[dict]:
     headers = {
         "Accept": "application/json",
         "x-api-key": API_KEY,
@@ -77,7 +78,7 @@ def get_people_without_birthdate(IMMICH_URL, API_KEY):
     return results
 
 
-def validate_birthdate(date_str):
+def validate_birthdate(date_str: Optional[str]) -> bool:
     """Return True if date_str is in YYYY-MM-DD format."""
     if not date_str:
         return False
@@ -88,7 +89,7 @@ def validate_birthdate(date_str):
         return False
 
 
-def update_birthdates(IMMICH_URL, API_KEY, rows, silent):
+def update_birthdates(IMMICH_URL: str, API_KEY: *** rows: Any, silent: bool) -> None:
     """Update birthdays on Immich based on the rows passed"""
     headers = {
         "Accept": "application/json",

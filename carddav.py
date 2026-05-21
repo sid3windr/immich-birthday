@@ -31,11 +31,12 @@ import configparser
 import os
 import sys
 import re
+from typing import Any, Tuple, List, Optional
 
 NAMESPACES = {'D': 'DAV:', 'C': 'urn:ietf:params:xml:ns:carddav'}
 
 
-def load_config():
+def load_config() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[float]]:
     """Load Immich configuration from immich.ini or environment variables."""
     config = configparser.ConfigParser()
     ini_path = os.path.join(os.path.dirname(__file__), "immich.ini")
@@ -71,7 +72,7 @@ def normalize_bday(bday: str) -> str | None:
     return None  # unsupported format
 
 
-def fetch_birthdates_from_carddav(rows, url, username, password, sleep):
+def fetch_birthdates_from_carddav(rows: List[List[str]], url: str, username: str, password: str, sleep: float) -> List[List[str]]:
     # CardDAV addressbook URL
     addressbook_url = f"{url}/addressbooks/{username}/contacts/"
 
