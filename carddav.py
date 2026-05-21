@@ -4,7 +4,7 @@
 Immich Birthday Sync.
 
 See README.md and the command line help for more information.
-Copyright (c) 2025 Tom Laermans.
+Copyright (c) 2025-2026 Tom Laermans.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
