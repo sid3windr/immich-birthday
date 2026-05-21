@@ -148,4 +148,4 @@ Run the test suite with:
 pytest
 ```
 
-Initial tests cover the `validate_birthdate` helper. More coverage is planned.
+Initial tests cover `validate_birthdate` and `normalize_bday`. `fetch_birthdates_from_carddav` in carddav.py is not yet tested.
