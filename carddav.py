@@ -35,6 +35,16 @@ from typing import Any, Tuple, List, Optional
 
 NAMESPACES = {'D': 'DAV:', 'C': 'urn:ietf:params:xml:ns:carddav'}
 
+TRAILING_EMOJI_RE = re.compile(
+    r"(?:\s*[\u2600-\u26FF\u2700-\u27BF\U0001F1E6-\U0001F1FF\U0001F300-\U0001FAFF\U0001F900-\U0001F9FF\u200D\uFE0F])+\s*$"
+)
+
+def clean_name(name: str) -> str:
+    """Clean nickname parentheses and trailing emoji/symbols from a name."""
+    name = re.sub(r"\s*\([^)]*\)", "", name)
+    name = TRAILING_EMOJI_RE.sub("", name)
+    return name.strip()
+
 
 def load_config() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[float]]:
     """Load Immich configuration from immich.ini or environment variables."""
